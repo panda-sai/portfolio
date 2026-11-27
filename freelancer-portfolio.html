@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>[Your Name] — Independent [Designer / Developer]</title>
+<meta name="description" content="[Your Name] — freelance [service] helping [type of clients] grow with [what you do]." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #f3efe7;
+    --cream-2: #e9e3d7;
+    --ink: #0f0f0e;
+    --ink-2: #1a1a18;
+    --ink-soft: #3a3936;
+    --muted: #7a776f;
+    --line: rgba(15,15,14,.12);
+    --line-d: rgba(243,239,231,.12);
+    --accent: #ff5b2e;
+    --accent-2: #d4ff3a;
+    --ease: cubic-bezier(.76,0,.24,1);
+    --ease-out: cubic-bezier(.16,1,.3,1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Manrope', system-ui, sans-serif; background: var(--cream); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; line-height: 1.6; }
+  body.loading { overflow: hidden; }
+  ::selection { background: var(--accent); color: var(--cream); }
+  a { color: inherit; text-decoration: none; }
+  .serif { font-family: 'Instrument Serif', serif; font-weight: 400; }
+  .container { width: min(1320px, 100% - 48px); margin-inline: auto; }
+  .accent { color: var(--accent); }
+
+  /* ===== Preloader ===== */
+  .loader { position: fixed; inset: 0; z-index: 1000; background: var(--ink); color: var(--cream); display: flex; align-items: flex-end; justify-content: space-between; padding: 40px; transition: transform 1.1s var(--ease); }
+  .loader.done { transform: translateY(-100%); }
+  .loader .count { font-family: 'Instrument Serif'; font-size: clamp(80px, 18vw, 240px); line-height: .8; }
+  .loader .lbl { font-size: 14px; letter-spacing: .2em; text-transform: uppercase; opacity: .6; }
+
+  /* ===== Cursor ===== */
+  .cursor { position: fixed; top: 0; left: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); pointer-events: none; z-index: 999; transform: translate(-50%,-50%); transition: width .4s var(--ease-out), height .4s var(--ease-out), background .3s; mix-blend-mode: difference; display: grid; place-items: center; }
+  .cursor span { font-size: 12px; font-weight: 700; color: var(--ink); opacity: 0; transition: opacity .3s; letter-spacing: .05em; mix-blend-mode: normal; }
+  .cursor.hover { width: 60px; height: 60px; background: var(--cream); }
+  .cursor.view { width: 96px; height: 96px; background: var(--accent-2); mix-blend-mode: normal; }
+  .cursor.view span { opacity: 1; }
+  @media (pointer: coarse) { .cursor { display: none; } }
+
+  /* ===== Header ===== */
+  header.top { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 22px 0; transition: transform .6s var(--ease), background .4s, padding .4s; }
+  header.top.scrolled { background: rgba(243,239,231,.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 14px 0; border-bottom: 1px solid var(--line); }
+  header.top.hidden { transform: translateY(-100%); }
+  .head-row { display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-weight: 800; font-size: 18px; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+  .brand i { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; display: inline-block; }
+  .menu { display: flex; gap: 6px; }
+  .menu a { position: relative; padding: 8px 14px; font-size: 14px; font-weight: 500; overflow: hidden; display: inline-block; }
+  .menu a span { display: block; transition: transform .5s var(--ease); }
+  .menu a span::after { content: attr(data-t); position: absolute; left: 0; top: 100%; width: 100%; text-align: center; color: var(--accent); }
+  .menu a:hover span { transform: translateY(-100%); }
+  .head-cta { display: flex; align-items: center; gap: 16px; }
+  .status { font-size: 13px; display: flex; align-items: center; gap: 8px; color: var(--ink-soft); }
+  .status i { width: 8px; height: 8px; border-radius: 50%; background: #1fbf5a; box-shadow: 0 0 0 4px rgba(31,191,90,.18); animation: pulse 2s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(31,191,90,0); } }
+
+  .pill { position: relative; display: inline-flex; align-items: center; gap: 12px; padding: 14px 26px; border-radius: 999px; background: var(--ink); color: var(--cream); font-weight: 600; font-size: 15px; overflow: hidden; isolation: isolate; border: none; cursor: pointer; font-family: inherit; }
+  .pill::before { content: ''; position: absolute; inset: 0; background: var(--accent); border-radius: inherit; transform: translateY(101%); transition: transform .6s var(--ease); z-index: -1; }
+  .pill:hover::before { transform: translateY(0); }
+  .pill .arr { width: 26px; height: 26px; border-radius: 50%; background: var(--cream); color: var(--ink); display: grid; place-items: center; font-size: 13px; transition: transform .6s var(--ease); }
+  .pill:hover .arr { transform: rotate(-45deg); }
+  .pill.light { background: var(--cream); color: var(--ink); }
+  .pill.light .arr { background: var(--ink); color: var(--cream); }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.outline:hover { color: var(--cream); border-color: var(--accent); }
+  .burger { display: none; }
+
+  /* ===== Hero ===== */
+  .hero { min-height: 100vh; padding: 150px 0 50px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+  .hero-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .15em; margin-bottom: 30px; }
+  .hero h1 { font-size: clamp(54px, 10.5vw, 176px); line-height: .92; letter-spacing: -.045em; font-weight: 700; }
+  .hero h1 .line { display: block; overflow: hidden; padding-bottom: .04em; }
+  .hero h1 .line > span { display: inline-block; transform: translateY(110%); transition: transform 1.4s var(--ease-out); }
+  body.ready .hero h1 .line > span { transform: none; }
+  .hero h1 .line:nth-child(2) > span { transition-delay: .1s; }
+  .hero h1 .line:nth-child(3) > span { transition-delay: .2s; }
+  .hero h1 .serif { font-style: italic; font-weight: 400; letter-spacing: -.02em; }
+  .rotator { display: inline-grid; vertical-align: bottom; overflow: hidden; height: 1em; line-height: 1; color: var(--accent); }
+  .rotator span { grid-area: 1/1; transform: translateY(100%); transition: transform .9s var(--ease); }
+  .rotator span.on { transform: translateY(0); }
+  .rotator span.out { transform: translateY(-100%); }
+  .hero-orb { display: inline-block; width: .8em; height: .8em; border-radius: 50%; vertical-align: middle; margin: 0 .1em; background: radial-gradient(circle at 30% 30%, #ffb199, var(--accent) 50%, #b12d0b); box-shadow: inset -10px -10px 30px rgba(0,0,0,.25), 0 20px 40px -10px rgba(255,91,46,.5); animation: wobble 8s ease-in-out infinite; }
+  @keyframes wobble { 0%,100% { border-radius: 50%; } 33% { border-radius: 42% 58% 55% 45%; } 66% { border-radius: 58% 42% 45% 55%; } }
+
+  .hero-bottom { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 40px; align-items: end; margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--line); }
+  .hero-bottom p { font-size: 18px; color: var(--ink-soft); max-width: 420px; }
+  .hero-stats { display: flex; gap: 40px; }
+  .hero-stats div strong { display: block; font-family: 'Instrument Serif'; font-size: 52px; line-height: 1; font-weight: 400; }
+  .hero-stats div span { font-size: 13px; color: var(--muted); }
+  .hero-bottom .actions { justify-self: end; display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+
+  /* ===== Logos marquee ===== */
+  .logos { padding: 40px 0; border-block: 1px solid var(--line); overflow: hidden; }
+  .logos .lbl { text-align: center; font-size: 13px; color: var(--muted); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 26px; }
+  .logos-track { display: flex; gap: 80px; width: max-content; animation: marquee 30s linear infinite; }
+  .logos-track span { font-size: 28px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); opacity: .35; white-space: nowrap; transition: opacity .3s; }
+  .logos-track span:nth-child(3n) { font-family: 'Instrument Serif'; font-weight: 400; font-style: italic; font-size: 32px; }
+  .logos-track span:hover { opacity: 1; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* ===== Section base ===== */
+  section { padding: 140px 0; position: relative; }
+  .sec-head { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-bottom: 80px; align-items: end; }
+  .sec-tag { font-size: 13px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+  .sec-tag b { width: 30px; height: 30px; border-radius: 50%; border: 1px solid currentColor; display: grid; place-items: center; font-size: 11px; font-weight: 600; }
+  .sec-head h2 { font-size: clamp(40px, 6vw, 96px); line-height: .95; letter-spacing: -.04em; font-weight: 700; }
+  .sec-head h2 .serif { font-style: italic; font-weight: 400; }
+
+  /* ===== About / intro ===== */
+  .intro-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: center; }
+  .portrait { position: relative; aspect-ratio: 4/5; border-radius: 28px; overflow: hidden; background: linear-gradient(160deg, #d8cfbd, #b9ad97); display: grid; place-items: center; color: rgba(15,15,14,.5); font-size: 14px; }
+  .portrait::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.5), transparent 50%); }
+  .portrait .sticker { position: absolute; bottom: 24px; right: -20px; width: 130px; height: 130px; border-radius: 50%; background: var(--accent-2); display: grid; place-items: center; animation: rot 14s linear infinite; }
+  .portrait .sticker svg { width: 100%; height: 100%; }
+  .portrait .sticker em { position: absolute; font-size: 28px; font-style: normal; animation: rot 14s linear infinite reverse; }
+  @keyframes rot { to { transform: rotate(360deg); } }
+  .intro-text .big { font-size: clamp(26px, 3vw, 42px); line-height: 1.25; letter-spacing: -.02em; font-weight: 500; margin-bottom: 40px; }
+  .intro-text .big .word { opacity: .15; transition: opacity .3s; }
+  .intro-text .big .word.lit { opacity: 1; }
+  .intro-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding-top: 30px; border-top: 1px solid var(--line); }
+  .intro-cols h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .15em; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+  .intro-cols p { color: var(--ink-soft); }
+
+  /* ===== Services (dark) ===== */
+  .dark { background: var(--ink); color: var(--cream); border-radius: 48px 48px 0 0; }
+  .dark .sec-tag { color: rgba(243,239,231,.5); }
+  .services { border-top: 1px solid var(--line-d); }
+  .service { display: grid; grid-template-columns: 80px 1.4fr 1.6fr 60px; gap: 30px; align-items: center; padding: 40px 10px; border-bottom: 1px solid var(--line-d); position: relative; cursor: pointer; transition: padding .6s var(--ease); }
+  .service::before { content: ''; position: absolute; inset: 0; background: var(--cream); transform: scaleY(0); transform-origin: bottom; transition: transform .6s var(--ease); z-index: 0; border-radius: 20px; }
+  .service > * { position: relative; z-index: 1; transition: color .5s; }
+  .service:hover::before { transform: scaleY(1); }
+  .service:hover > * { color: var(--ink); }
+  .service:hover { padding-inline: 30px; }
+  .service .no { font-family: 'Instrument Serif'; font-size: 26px; opacity: .5; }
+  .service h3 { font-size: clamp(28px, 3.5vw, 52px); letter-spacing: -.03em; font-weight: 700; line-height: 1; }
+  .service p { color: rgba(243,239,231,.6); font-size: 16px; }
+  .service:hover p { color: var(--ink-soft); }
+  .service .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .service .tags span { font-size: 12px; padding: 4px 12px; border-radius: 99px; border: 1px solid currentColor; opacity: .7; }
+  .service .go { width: 54px; height: 54px; border-radius: 50%; border: 1px solid var(--line-d); display: grid; place-items: center; font-size: 20px; transition: .6s var(--ease); }
+  .service:hover .go { background: var(--accent); border-color: var(--accent); color: var(--cream); transform: rotate(-45deg); }
+
+  /* ===== Work ===== */
+  .work-wrap { background: var(--ink); color: var(--cream); padding-top: 40px; }
+  .work-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; }
+  .work { position: relative; display: block; }
+  .work:nth-child(1) { grid-column: span 7; }
+  .work:nth-child(2) { grid-column: span 5; margin-top: 140px; }
+  .work:nth-child(3) { grid-column: span 5; }
+  .work:nth-child(4) { grid-column: span 7; margin-top: -100px; }
+  .work .media { aspect-ratio: 4/3; border-radius: 24px; overflow: hidden; position: relative; }
+  .work:nth-child(2) .media, .work:nth-child(3) .media { aspect-ratio: 4/5; }
+  .work .media .inner { position: absolute; inset: 0; transition: transform 1.2s var(--ease-out); display: grid; place-items: center; }
+  .work:hover .media .inner { transform: scale(1.06); }
+  .work .media .ph { font-size: 14px; color: rgba(255,255,255,.7); padding: 10px 18px; border: 1px dashed rgba(255,255,255,.35); border-radius: 99px; backdrop-filter: blur(6px); }
+  .w1 { background: radial-gradient(circle at 70% 30%, #ff8a63, transparent 50%), radial-gradient(circle at 20% 80%, #6c3bff, transparent 55%), #2a1f3d; }
+  .w2 { background: radial-gradient(circle at 30% 30%, #d4ff3a, transparent 50%), radial-gradient(circle at 80% 90%, #1f8f6a, transparent 60%), #13281f; }
+  .w3 { background: radial-gradient(circle at 60% 20%, #7dd3fc, transparent 50%), radial-gradient(circle at 20% 90%, #1e3a8a, transparent 60%), #0d1a33; }
+  .w4 { background: radial-gradient(circle at 20% 30%, #fde68a, transparent 45%), radial-gradient(circle at 80% 70%, #ff5b2e, transparent 55%), #3a1a0e; }
+  .work .media .shape { position: absolute; width: 46%; aspect-ratio: 1; border-radius: 30%; background: rgba(255,255,255,.12); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,.25); transform: rotate(12deg); transition: transform 1.2s var(--ease-out); }
+  .work:hover .media .shape { transform: rotate(-8deg) scale(1.08); }
+  .work .info { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-top: 22px; }
+  .work h3 { font-size: 28px; letter-spacing: -.02em; font-weight: 600; }
+  .work .cat { color: rgba(243,239,231,.55); font-size: 14px; }
+  .work .yr { font-family: 'Instrument Serif'; font-size: 22px; opacity: .6; }
+  .work .result { position: absolute; top: 20px; left: 20px; padding: 8px 14px; border-radius: 99px; background: var(--cream); color: var(--ink); font-size: 13px; font-weight: 600; z-index: 2; }
+  .work-cta { text-align: center; margin-top: 100px; }
+
+  /* ===== Process ===== */
+  .process { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--line); }
+  .step { padding: 40px 30px 40px 0; border-right: 1px solid var(--line); position: relative; }
+  .step:last-child { border-right: none; }
+  .step:not(:first-child) { padding-left: 30px; }
+  .step .n { font-family: 'Instrument Serif'; font-size: 90px; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--ink); margin-bottom: 30px; transition: color .5s; }
+  .step:hover .n { color: var(--accent); -webkit-text-stroke-color: var(--accent); }
+  .step h4 { font-size: 22px; margin-bottom: 10px; letter-spacing: -.02em; }
+  .step p { color: var(--ink-soft); font-size: 15px; }
+  .step .dur { margin-top: 20px; font-size: 13px; color: var(--muted); display: inline-flex; gap: 8px; align-items: center; }
+
+  /* ===== Pricing ===== */
+  .toggle { display: inline-flex; padding: 5px; border-radius: 99px; background: var(--cream-2); margin-bottom: 50px; position: relative; }
+  .toggle button { position: relative; z-index: 1; padding: 10px 24px; border: none; background: none; font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 99px; transition: color .4s; color: var(--ink-soft); }
+  .toggle button.on { color: var(--cream); }
+  .toggle .knob { position: absolute; top: 5px; bottom: 5px; left: 5px; border-radius: 99px; background: var(--ink); transition: .5s var(--ease); }
+  .prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .price { padding: 40px; border-radius: 32px; border: 1px solid var(--line); background: rgba(255,255,255,.35); display: flex; flex-direction: column; transition: transform .6s var(--ease-out), box-shadow .6s; }
+  .price:hover { transform: translateY(-10px); box-shadow: 0 40px 80px -30px rgba(15,15,14,.25); }
+  .price.feat { background: var(--ink); color: var(--cream); border-color: var(--ink); position: relative; }
+  .price.feat .badge { position: absolute; top: 30px; right: 30px; background: var(--accent-2); color: var(--ink); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 99px; }
+  .price h4 { font-size: 15px; text-transform: uppercase; letter-spacing: .15em; font-weight: 600; margin-bottom: 8px; }
+  .price .desc { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
+  .price.feat .desc { color: rgba(243,239,231,.6); }
+  .price .amt { font-family: 'Instrument Serif'; font-size: 72px; line-height: 1; margin-bottom: 6px; }
+  .price .amt small { font-family: 'Manrope'; font-size: 15px; color: var(--muted); }
+  .price .note { font-size: 13px; color: var(--muted); margin-bottom: 30px; }
+  .price ul { list-style: none; margin-bottom: 36px; display: grid; gap: 12px; flex: 1; }
+  .price li { display: flex; gap: 12px; font-size: 15px; }
+  .price li::before { content: '✓'; flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: var(--cream); display: grid; place-items: center; font-size: 11px; }
+  .price.feat li::before { background: var(--accent-2); color: var(--ink); }
+  .price .pill { justify-content: space-between; }
+
+  /* ===== Testimonials ===== */
+  .testi { background: var(--cream-2); border-radius: 48px; margin: 0 24px; }
+  .t-slider { position: relative; overflow: hidden; }
+  .t-track { display: flex; transition: transform .9s var(--ease); }
+  .t-slide { min-width: 100%; display: grid; grid-template-columns: 1fr 2.2fr; gap: 60px; align-items: center; }
+  .t-avatar { aspect-ratio: 1; border-radius: 50%; max-width: 280px; background: linear-gradient(135deg, #c9bda6, #a89a80); display: grid; place-items: center; color: rgba(15,15,14,.45); font-size: 14px; }
+  .t-slide blockquote { font-family: 'Instrument Serif'; font-size: clamp(28px, 3.6vw, 54px); line-height: 1.15; letter-spacing: -.01em; margin-bottom: 36px; }
+  .t-slide blockquote::before { content: '“'; color: var(--accent); }
+  .t-slide blockquote::after { content: '”'; color: var(--accent); }
+  .t-who strong { display: block; font-size: 18px; }
+  .t-who span { color: var(--muted); font-size: 15px; }
+  .stars { color: var(--accent); letter-spacing: 3px; margin-bottom: 20px; font-size: 18px; }
+  .t-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--line); }
+  .t-dots { display: flex; gap: 8px; }
+  .t-dots button { width: 34px; height: 4px; border-radius: 4px; border: none; background: var(--line); cursor: pointer; transition: .4s; padding: 0; }
+  .t-dots button.on { background: var(--ink); width: 60px; }
+  .t-arrows { display: flex; gap: 10px; }
+  .t-arrows button { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--ink); background: none; font-size: 18px; cursor: pointer; transition: .4s; color: var(--ink); }
+  .t-arrows button:hover { background: var(--ink); color: var(--cream); }
+
+  /* ===== FAQ ===== */
+  .faq-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 80px; }
+  .faq-side p { color: var(--ink-soft); font-size: 17px; margin: 20px 0 30px; max-width: 360px; }
+  .faq-item { border-bottom: 1px solid var(--line); }
+  .faq-q { width: 100%; background: none; border: none; text-align: left; padding: 30px 0; font-family: inherit; font-size: 21px; font-weight: 600; letter-spacing: -.01em; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 20px; color: var(--ink); }
+  .faq-q .pm { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); position: relative; flex-shrink: 0; transition: .5s var(--ease); }
+  .faq-q .pm::before, .faq-q .pm::after { content: ''; position: absolute; top: 50%; left: 50%; width: 14px; height: 1.5px; background: currentColor; transform: translate(-50%,-50%); transition: .5s var(--ease); }
+  .faq-q .pm::after { transform: translate(-50%,-50%) rotate(90deg); }
+  .faq-item.open .pm { background: var(--accent); border-color: var(--accent); color: var(--cream); transform: rotate(180deg); }
+  .faq-item.open .pm::after { transform: translate(-50%,-50%) rotate(0); }
+  .faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .6s var(--ease); }
+  .faq-a > div { overflow: hidden; }
+  .faq-a p { padding-bottom: 30px; color: var(--ink-soft); max-width: 640px; }
+  .faq-item.open .faq-a { grid-template-rows: 1fr; }
+
+  /* ===== CTA / Contact ===== */
+  .cta { background: var(--ink); color: var(--cream); padding: 160px 0 0; border-radius: 48px 48px 0 0; overflow: hidden; position: relative; }
+  .cta::before { content: ''; position: absolute; width: 900px; height: 900px; border-radius: 50%; background: radial-gradient(circle, rgba(255,91,46,.35), transparent 60%); top: -300px; right: -300px; filter: blur(40px); pointer-events: none; }
+  .cta-head { text-align: center; position: relative; }
+  .cta-head .sec-tag { justify-content: center; color: rgba(243,239,231,.5); margin-bottom: 30px; }
+  .cta-head h2 { font-size: clamp(56px, 12vw, 200px); line-height: .88; letter-spacing: -.05em; font-weight: 700; }
+  .cta-head h2 .serif { font-style: italic; font-weight: 400; color: var(--accent); }
+  .cta-btn-wrap { display: flex; justify-content: center; margin: 60px 0 100px; }
+  .big-circle { width: 200px; height: 200px; border-radius: 50%; background: var(--accent); color: var(--cream); display: grid; place-items: center; text-align: center; font-weight: 700; font-size: 18px; line-height: 1.2; transition: transform .6s var(--ease-out), background .4s; }
+  .big-circle:hover { background: var(--accent-2); color: var(--ink); }
+
+  .contact-box { display: grid; grid-template-columns: 1fr 1.3fr; gap: 60px; padding: 60px; border-radius: 32px; background: var(--ink-2); border: 1px solid var(--line-d); position: relative; }
+  .contact-box h3 { font-size: 34px; letter-spacing: -.02em; margin-bottom: 14px; }
+  .contact-box > div > p { color: rgba(243,239,231,.6); margin-bottom: 30px; }
+  .c-line { display: flex; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--line-d); font-size: 15px; }
+  .c-line span:first-child { color: rgba(243,239,231,.5); }
+  .c-line a:hover { color: var(--accent); }
+  .cform .row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .cform .f { margin-bottom: 26px; }
+  .cform label { display: block; font-size: 13px; color: rgba(243,239,231,.5); margin-bottom: 6px; letter-spacing: .05em; }
+  .cform input, .cform textarea, .cform select { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--line-d); color: var(--cream); padding: 12px 0; font-family: inherit; font-size: 17px; outline: none; transition: border-color .4s; resize: none; }
+  .cform input:focus, .cform textarea:focus, .cform select:focus { border-color: var(--accent); }
+  .cform select option { background: var(--ink); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chips label { margin: 0; cursor: pointer; }
+  .chips input { display: none; }
+  .chips span { display: inline-block; padding: 9px 18px; border-radius: 99px; border: 1px solid var(--line-d); font-size: 14px; color: var(--cream); transition: .3s; }
+  .chips input:checked + span { background: var(--cream); color: var(--ink); border-color: var(--cream); }
+
+  footer { padding: 100px 0 40px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 60px; border-bottom: 1px solid var(--line-d); }
+  .foot-grid h5 { font-size: 13px; text-transform: uppercase; letter-spacing: .15em; color: rgba(243,239,231,.4); margin-bottom: 18px; font-weight: 600; }
+  .foot-grid a { display: block; padding: 4px 0; color: rgba(243,239,231,.8); transition: color .3s, transform .3s; }
+  .foot-grid a:hover { color: var(--accent); transform: translateX(4px); }
+  .foot-grid .news p { color: rgba(243,239,231,.6); margin-bottom: 18px; max-width: 360px; }
+  .clock { font-family: 'Instrument Serif'; font-size: 42px; line-height: 1; }
+  .foot-bottom { display: flex; justify-content: space-between; padding-top: 30px; font-size: 14px; color: rgba(243,239,231,.4); flex-wrap: wrap; gap: 14px; }
+  .mega { font-size: clamp(60px, 16vw, 280px); font-weight: 800; letter-spacing: -.06em; line-height: .8; text-align: center; color: var(--cream); opacity: .06; margin-top: 40px; user-select: none; white-space: nowrap; }
+
+  /* Reveal */
+  .rv { opacity: 0; transform: translateY(60px); transition: opacity 1.2s var(--ease-out), transform 1.2s var(--ease-out); }
+  .rv.in { opacity: 1; transform: none; }
+  .rv.d1 { transition-delay: .1s; } .rv.d2 { transition-delay: .2s; } .rv.d3 { transition-delay: .3s; }
+
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translate(-50%, 140px); background: var(--accent-2); color: var(--ink); font-weight: 700; padding: 16px 26px; border-radius: 99px; z-index: 500; transition: transform .6s var(--ease); }
+  .toast.show { transform: translate(-50%, 0); }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1080px) {
+    .hero-bottom { grid-template-columns: 1fr; }
+    .hero-bottom .actions { justify-self: start; justify-content: flex-start; }
+    .sec-head, .intro-grid, .faq-grid, .contact-box, .t-slide { grid-template-columns: 1fr; }
+    .service { grid-template-columns: 50px 1fr 50px; }
+    .service .desc-wrap { grid-column: 2; grid-row: 2; }
+    .process { grid-template-columns: 1fr 1fr; }
+    .step { border-bottom: 1px solid var(--line); }
+    .step:nth-child(2) { border-right: none; }
+    .step:nth-child(3) { padding-left: 0; }
+    .prices { grid-template-columns: 1fr; max-width: 520px; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    .t-avatar { max-width: 160px; }
+    .portrait { max-width: 440px; }
+  }
+  @media (max-width: 760px) {
+    .menu, .status { display: none; }
+    .head-cta .pill { padding: 10px 18px; font-size: 14px; }
+    .head-cta .pill .arr { display: none; }
+    .burger { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: var(--cream); border: none; font-size: 18px; cursor: pointer; }
+    .menu.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 16px; right: 16px; background: var(--ink); border-radius: 20px; padding: 16px; }
+    .menu.open a { color: var(--cream); font-size: 18px; text-align: left; }
+    section { padding: 90px 0; }
+    .container { width: calc(100% - 32px); }
+    .hero-meta span:last-child { display: none; }
+    .hero-stats { gap: 24px; }
+    .work-grid { grid-template-columns: 1fr; }
+    .work:nth-child(n) { grid-column: auto; margin-top: 0; }
+    .process { grid-template-columns: 1fr; }
+    .step, .step:not(:first-child) { padding: 30px 0; border-right: none; }
+    .intro-cols, .cform .row { grid-template-columns: 1fr; }
+    .contact-box { padding: 30px 22px; }
+    .testi { margin: 0 12px; border-radius: 32px; }
+    .dark, .cta { border-radius: 32px 32px 0 0; }
+    .service { padding: 28px 0; gap: 16px; }
+    .service:hover { padding-inline: 14px; }
+    .service .go { width: 42px; height: 42px; }
+    .portrait .sticker { right: 10px; width: 100px; height: 100px; }
+    .big-circle { width: 160px; height: 160px; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01s !important; }
+    .rv { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body class="loading">
+
+<div class="loader" id="loader"><span class="lbl">[Your Name] — Portfolio ©[Year]</span><span class="count" id="count">0</span></div>
+<div class="cursor" id="cursor"><span>VIEW</span></div>
+
+<!-- ===== HEADER ===== -->
+<header class="top" id="top">
+  <div class="container head-row">
+    <a href="#" class="brand"><i></i>[Your Name]</a>
+    <nav class="menu" id="menu">
+      <a href="#services"><span data-t="Services">Services</span></a>
+      <a href="#work"><span data-t="Work">Work</span></a>
+      <a href="#process"><span data-t="Process">Process</span></a>
+      <a href="#pricing"><span data-t="Pricing">Pricing</span></a>
+      <a href="#faq"><span data-t="FAQ">FAQ</span></a>
+    </nav>
+    <div class="head-cta">
+      <span class="status"><i></i>Booking [Month Year]</span>
+      <a href="#contact" class="pill">Let's talk <span class="arr">→</span></a>
+      <button class="burger" id="burger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-meta"><span>Independent [Designer &amp; Developer]</span><span>Based in [City] — Working worldwide</span></div>
+    <h1>
+      <span class="line"><span>I craft <span class="serif">digital</span></span></span>
+      <span class="line"><span><span class="rotator" id="rotator"><span class="on">brands</span><span>websites</span><span>products</span><span>experiences</span></span> <span class="hero-orb"></span></span></span>
+      <span class="line"><span>that <span class="serif">sell.</span></span></span>
+    </h1>
+  </div>
+  <div class="container hero-bottom">
+    <p>[Your one-line value proposition — e.g. "I help ambitious startups and small businesses launch websites that look premium, load fast and turn visitors into paying customers."]</p>
+    <div class="hero-stats">
+      <div><strong data-n="[8]">[8]</strong><span>Years experience</span></div>
+      <div><strong data-n="120">0</strong><span>Projects delivered</span></div>
+      <div><strong data-n="98">0</strong><span>% happy clients</span></div>
+    </div>
+    <div class="actions">
+      <a href="#work" class="pill outline">See work <span class="arr">↓</span></a>
+      <a href="#contact" class="pill">Start a project <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LOGOS ===== -->
+<div class="logos">
+  <div class="lbl">Trusted by teams at</div>
+  <div class="logos-track">
+    <span>[Client One]</span><span>[CLIENT TWO]</span><span>[Client Three]</span><span>[Client Four]</span><span>[CLIENT FIVE]</span><span>[Client Six]</span><span>[Client Seven]</span>
+    <span>[Client One]</span><span>[CLIENT TWO]</span><span>[Client Three]</span><span>[Client Four]</span><span>[CLIENT FIVE]</span><span>[Client Six]</span><span>[Client Seven]</span>
+  </div>
+</div>
+
+<!-- ===== ABOUT ===== -->
+<section id="about">
+  <div class="container intro-grid">
+    <div class="portrait rv">
+      [Your Portrait — 4:5]
+      <div class="sticker">
+        <svg viewBox="0 0 100 100"><defs><path id="circ" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"/></defs><text font-size="10.5" font-weight="700" letter-spacing="2.2" fill="#0f0f0e"><textPath href="#circ">AVAILABLE FOR WORK • AVAILABLE FOR WORK •</textPath></text></svg>
+        <em>✦</em>
+      </div>
+    </div>
+    <div class="intro-text">
+      <div class="sec-tag rv" style="margin-bottom:30px"><b>01</b>About</div>
+      <p class="big" id="scrubText">[Hi, I'm Your Name — a freelance designer and developer who partners with founders, agencies and growing brands. I blend strategy, design and code to build things that look beautiful and actually move the numbers.]</p>
+      <div class="intro-cols rv">
+        <div><h4>What I believe</h4><p>[Your philosophy — e.g. "Good design is invisible. It removes friction, earns trust and makes the next step obvious."]</p></div>
+        <div><h4>Who I work with</h4><p>[Your ideal clients — e.g. "Early-stage startups, D2C brands, creative studios and consultants who care about quality."]</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SERVICES ===== -->
+<section class="dark" id="services">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag rv"><b>02</b>Services</div>
+      <h2 class="rv d1">How I can <span class="serif">help</span> your business grow.</h2>
+    </div>
+    <div class="services">
+      <div class="service rv">
+        <span class="no">01</span>
+        <h3>[Service One]</h3>
+        <div class="desc-wrap"><p>[E.g. Brand Identity — logo systems, typography, colour and guidelines that make you instantly recognisable.]</p><div class="tags"><span>[Deliverable]</span><span>[Deliverable]</span><span>[Deliverable]</span></div></div>
+        <span class="go">→</span>
+      </div>
+      <div class="service rv">
+        <span class="no">02</span>
+        <h3>[Service Two]</h3>
+        <div class="desc-wrap"><p>[E.g. Web Design &amp; Development — high-converting, responsive websites built for speed and SEO.]</p><div class="tags"><span>[Deliverable]</span><span>[Deliverable]</span><span>[Deliverable]</span></div></div>
+        <span class="go">→</span>
+      </div>
+      <div class="service rv">
+        <span class="no">03</span>
+        <h3>[Service Three]</h3>
+        <div class="desc-wrap"><p>[E.g. Product / UI-UX Design — research-driven interfaces for web and mobile apps.]</p><div class="tags"><span>[Deliverable]</span><span>[Deliverable]</span><span>[Deliverable]</span></div></div>
+        <span class="go">→</span>
+      </div>
+      <div class="service rv">
+        <span class="no">04</span>
+        <h3>[Service Four]</h3>
+        <div class="desc-wrap"><p>[E.g. Ongoing Support — maintenance, CRO experiments, and design-on-demand retainers.]</p><div class="tags"><span>[Deliverable]</span><span>[Deliverable]</span><span>[Deliverable]</span></div></div>
+        <span class="go">→</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WORK ===== -->
+<section class="work-wrap" id="work">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag rv" style="color:rgba(243,239,231,.5)"><b>03</b>Selected work</div>
+      <h2 class="rv d1">Recent <span class="serif">projects</span> I'm proud of.</h2>
+    </div>
+    <div class="work-grid">
+      <a href="[#case-study-1]" class="work rv" data-cursor="view">
+        <div class="media"><span class="result">[+240% conversions]</span><div class="inner w1"><span class="shape"></span><span class="ph">[Project Image]</span></div></div>
+        <div class="info"><div><h3>[Project Name One]</h3><span class="cat">[Branding · Website]</span></div><span class="yr">[2026]</span></div>
+      </a>
+      <a href="[#case-study-2]" class="work rv d1" data-cursor="view">
+        <div class="media"><span class="result">[3× faster]</span><div class="inner w2"><span class="shape"></span><span class="ph">[Project Image]</span></div></div>
+        <div class="info"><div><h3>[Project Name Two]</h3><span class="cat">[Web App · UI/UX]</span></div><span class="yr">[2026]</span></div>
+      </a>
+      <a href="[#case-study-3]" class="work rv" data-cursor="view">
+        <div class="media"><span class="result">[$1.2M raised]</span><div class="inner w3"><span class="shape"></span><span class="ph">[Project Image]</span></div></div>
+        <div class="info"><div><h3>[Project Name Three]</h3><span class="cat">[Pitch Deck · Brand]</span></div><span class="yr">[2025]</span></div>
+      </a>
+      <a href="[#case-study-4]" class="work rv d1" data-cursor="view">
+        <div class="media"><span class="result">[50k+ users]</span><div class="inner w4"><span class="shape"></span><span class="ph">[Project Image]</span></div></div>
+        <div class="info"><div><h3>[Project Name Four]</h3><span class="cat">[E-commerce · Development]</span></div><span class="yr">[2025]</span></div>
+      </a>
+    </div>
+    <div class="work-cta rv"><a href="[#all-work]" class="pill light">View all projects <span class="arr">→</span></a></div>
+  </div>
+</section>
+
+<!-- ===== PROCESS ===== -->
+<section id="process">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag rv"><b>04</b>Process</div>
+      <h2 class="rv d1">A simple, <span class="serif">transparent</span> way of working.</h2>
+    </div>
+    <div class="process">
+      <div class="step rv"><div class="n">01</div><h4>Discovery call</h4><p>[We talk about your goals, audience, timeline and budget. I ask lots of questions.]</p><span class="dur">⏱ [30 min · Free]</span></div>
+      <div class="step rv d1"><div class="n">02</div><h4>Strategy &amp; proposal</h4><p>[You get a clear scope, timeline, fixed quote and a moodboard to align on direction.]</p><span class="dur">⏱ [2–3 days]</span></div>
+      <div class="step rv d2"><div class="n">03</div><h4>Design &amp; build</h4><p>[I design, iterate with your feedback, and build — with weekly progress updates.]</p><span class="dur">⏱ [2–6 weeks]</span></div>
+      <div class="step rv d3"><div class="n">04</div><h4>Launch &amp; support</h4><p>[We launch together. You get training, handover files and [30] days of free support.]</p><span class="dur">⏱ [Ongoing]</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section id="pricing" style="padding-top:40px">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag rv"><b>05</b>Pricing</div>
+      <h2 class="rv d1">Clear pricing. <span class="serif">No surprises.</span></h2>
+    </div>
+    <div class="toggle rv" id="toggle"><span class="knob" id="knob"></span><button class="on" data-mode="project">Per project</button><button data-mode="monthly">Monthly retainer</button></div>
+    <div class="prices">
+      <div class="price rv">
+        <h4>[Starter]</h4><p class="desc">[Perfect for new businesses and personal brands.]</p>
+        <div class="amt"><span class="val" data-p="[$1,500]" data-m="[$800]">[$1,500]</span><small class="per"> / project</small></div>
+        <p class="note">[Starting price · 2–3 weeks]</p>
+        <ul><li>[Feature / deliverable one]</li><li>[Feature / deliverable two]</li><li>[Feature / deliverable three]</li><li>[2 rounds of revisions]</li></ul>
+        <a href="#contact" class="pill outline">Choose plan <span class="arr">→</span></a>
+      </div>
+      <div class="price feat rv d1">
+        <span class="badge">Most popular</span>
+        <h4>[Growth]</h4><p class="desc">[For startups ready to look and perform like market leaders.]</p>
+        <div class="amt"><span class="val" data-p="[$4,500]" data-m="[$2,000]">[$4,500]</span><small class="per"> / project</small></div>
+        <p class="note" style="color:rgba(243,239,231,.5)">[Starting price · 4–6 weeks]</p>
+        <ul><li>[Everything in Starter]</li><li>[Feature / deliverable two]</li><li>[Feature / deliverable three]</li><li>[Feature / deliverable four]</li><li>[Unlimited revisions]</li></ul>
+        <a href="#contact" class="pill light">Choose plan <span class="arr">→</span></a>
+      </div>
+      <div class="price rv d2">
+        <h4>[Premium]</h4><p class="desc">[End-to-end partnership for complex products and brands.]</p>
+        <div class="amt"><span class="val" data-p="[Custom]" data-m="[$5,000]">[Custom]</span><small class="per"></small></div>
+        <p class="note">[Tailored scope · Priority support]</p>
+        <ul><li>[Everything in Growth]</li><li>[Feature / deliverable two]</li><li>[Feature / deliverable three]</li><li>[Dedicated Slack channel]</li></ul>
+        <a href="#contact" class="pill outline">Book a call <span class="arr">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="testi" id="testimonials">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag rv"><b>06</b>Kind words</div>
+      <h2 class="rv d1">Don't take <span class="serif">my word</span> for it.</h2>
+    </div>
+    <div class="t-slider rv">
+      <div class="t-track" id="tTrack">
+        <div class="t-slide">
+          <div class="t-avatar">[Client Photo]</div>
+          <div><div class="stars">★★★★★</div><blockquote>[Working with Your Name was the best decision we made this year. Our new site doubled inbound leads within the first month.]</blockquote><div class="t-who"><strong>[Client Name]</strong><span>[Role], [Company]</span></div></div>
+        </div>
+        <div class="t-slide">
+          <div class="t-avatar">[Client Photo]</div>
+          <div><div class="stars">★★★★★</div><blockquote>[Incredibly professional, fast and creative. They understood our vision better than we did and delivered beyond expectations.]</blockquote><div class="t-who"><strong>[Client Name]</strong><span>[Role], [Company]</span></div></div>
+        </div>
+        <div class="t-slide">
+          <div class="t-avatar">[Client Photo]</div>
+          <div><div class="stars">★★★★★</div><blockquote>[Clear communication, zero stress, and a final product our customers love. We've already booked the next project.]</blockquote><div class="t-who"><strong>[Client Name]</strong><span>[Role], [Company]</span></div></div>
+        </div>
+      </div>
+      <div class="t-nav">
+        <div class="t-dots" id="tDots"></div>
+        <div class="t-arrows"><button id="tPrev" aria-label="Previous">←</button><button id="tNext" aria-label="Next">→</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq">
+  <div class="container faq-grid">
+    <div class="faq-side rv">
+      <div class="sec-tag"><b>07</b>FAQ</div>
+      <h2 style="font-size:clamp(40px,5vw,72px);line-height:.95;letter-spacing:-.04em;margin-top:24px">Questions? <span class="serif" style="font-style:italic;font-weight:400">Answers.</span></h2>
+      <p>Can't find what you're looking for? Send me a message and I'll get back to you within [24 hours].</p>
+      <a href="#contact" class="pill">Ask me anything <span class="arr">→</span></a>
+    </div>
+    <div class="faq-list rv d1">
+      <div class="faq-item open"><button class="faq-q">How long does a typical project take? <span class="pm"></span></button><div class="faq-a"><div><p>[Most projects take 2–6 weeks depending on scope. You'll get a detailed timeline in the proposal before we start.]</p></div></div></div>
+      <div class="faq-item"><button class="faq-q">What do you need from me to get started? <span class="pm"></span></button><div class="faq-a"><div><p>[A short brief, your goals, any existing brand assets, and examples of work you like. I'll guide you through the rest.]</p></div></div></div>
+      <div class="faq-item"><button class="faq-q">How does payment work? <span class="pm"></span></button><div class="faq-a"><div><p>[50% deposit to book your slot, 50% on completion. I accept bank transfer, PayPal, Stripe and Wise.]</p></div></div></div>
+      <div class="faq-item"><button class="faq-q">Do you work with clients internationally? <span class="pm"></span></button><div class="faq-a"><div><p>[Yes! I work with clients across [regions] and adapt to your timezone for calls.]</p></div></div></div>
+      <div class="faq-item"><button class="faq-q">What happens after launch? <span class="pm"></span></button><div class="faq-a"><div><p>[You get [30] days of free support, handover documentation, and optional monthly retainers for ongoing work.]</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA + CONTACT + FOOTER ===== -->
+<div class="cta" id="contact">
+  <div class="container">
+    <div class="cta-head">
+      <div class="sec-tag rv"><b>08</b>Contact</div>
+      <h2 class="rv d1">Let's make<br/>something <span class="serif">great.</span></h2>
+    </div>
+    <div class="cta-btn-wrap rv"><a href="mailto:[hello@yourdomain.com]" class="big-circle magnetic">Book a<br/>free call ↗</a></div>
+
+    <div class="contact-box rv">
+      <div>
+        <h3>Tell me about your project.</h3>
+        <p>Fill in the form or reach out directly. I reply to every enquiry within [24 hours] on business days.</p>
+        <div class="c-line"><span>Email</span><a href="mailto:[hello@yourdomain.com]">[hello@yourdomain.com]</a></div>
+        <div class="c-line"><span>Phone / WhatsApp</span><a href="tel:[+0000000000]">[+00 00000 00000]</a></div>
+        <div class="c-line"><span>Calendly</span><a href="[https://calendly.com/your-link]">[calendly.com/your-link]</a></div>
+        <div class="c-line"><span>Location</span><span>[City, Country]</span></div>
+      </div>
+      <form class="cform" id="cform">
+        <div class="row">
+          <div class="f"><label for="fn">Your name *</label><input id="fn" required placeholder="[John Doe]" /></div>
+          <div class="f"><label for="fe">Email *</label><input id="fe" type="email" required placeholder="[john@company.com]" /></div>
+        </div>
+        <div class="f"><label>I'm interested in…</label>
+          <div class="chips">
+            <label><input type="checkbox" /><span>[Service One]</span></label>
+            <label><input type="checkbox" /><span>[Service Two]</span></label>
+            <label><input type="checkbox" /><span>[Service Three]</span></label>
+            <label><input type="checkbox" /><span>[Service Four]</span></label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="f"><label for="fb">Budget</label><select id="fb"><option>[&lt; $2k]</option><option>[$2k – $5k]</option><option>[$5k – $10k]</option><option>[$10k+]</option></select></div>
+          <div class="f"><label for="ft">Timeline</label><select id="ft"><option>[ASAP]</option><option>[1–2 months]</option><option>[3+ months]</option><option>[Flexible]</option></select></div>
+        </div>
+        <div class="f"><label for="fm">Project details *</label><textarea id="fm" rows="3" required placeholder="[Tell me a little about your project…]"></textarea></div>
+        <button class="pill light" type="submit">Send enquiry <span class="arr">→</span></button>
+      </form>
+    </div>
+
+    <footer>
+      <div class="foot-grid">
+        <div class="news">
+          <h5>Local time — [City]</h5>
+          <div class="clock" id="clock">00:00:00</div>
+          <p style="margin-top:18px">[Short sign-off line — e.g. "Currently accepting new projects for Q1. Let's build something memorable."]</p>
+        </div>
+        <div><h5>Navigate</h5><a href="#services">Services</a><a href="#work">Work</a><a href="#process">Process</a><a href="#pricing">Pricing</a></div>
+        <div><h5>Socials</h5><a href="[#]">LinkedIn</a><a href="[#]">Dribbble</a><a href="[#]">Behance</a><a href="[#]">Instagram</a></div>
+        <div><h5>Profiles</h5><a href="[#]">Upwork</a><a href="[#]">Fiverr</a><a href="[#]">Contra</a><a href="[#]">GitHub</a></div>
+      </div>
+      <div class="foot-bottom"><span>© <span id="yr"></span> [Your Name / Studio Name]. All rights reserved.</span><a href="#" id="backTop">Back to top ↑</a></div>
+      <div class="mega">[YOUR NAME]</div>
+    </footer>
+  </div>
+</div>
+
+<div class="toast" id="toast">Thanks! I'll be in touch soon ✦</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+
+  // Preloader
+  (function () {
+    const c = $('#count'); let n = 0;
+    const tick = () => {
+      n = Math.min(100, n + Math.ceil(Math.random() * 9));
+      c.textContent = n;
+      if (n < 100) setTimeout(tick, 40);
+      else setTimeout(() => { $('#loader').classList.add('done'); document.body.classList.remove('loading'); document.body.classList.add('ready'); }, 300);
+    };
+    tick();
+  })();
+
+  // Rotating hero word
+  const rot = $$('#rotator span'); let ri = 0;
+  setInterval(() => {
+    rot[ri].classList.remove('on'); rot[ri].classList.add('out');
+    const prev = rot[ri]; setTimeout(() => prev.classList.remove('out'), 900);
+    ri = (ri + 1) % rot.length; rot[ri].classList.add('on');
+  }, 2400);
+
+  // Custom cursor
+  const cur = $('#cursor'); let cx = innerWidth / 2, cy = innerHeight / 2, tx = cx, ty = cy;
+  addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; });
+  (function loop() { cx += (tx - cx) * .18; cy += (ty - cy) * .18; cur.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%)`; requestAnimationFrame(loop); })();
+  cur.style.left = cur.style.top = '0';
+  $$('a, button, .service').forEach(el => {
+    el.addEventListener('pointerenter', () => cur.classList.add(el.dataset.cursor === 'view' ? 'view' : 'hover'));
+    el.addEventListener('pointerleave', () => cur.classList.remove('hover', 'view'));
+  });
+
+  // Header hide on scroll down
+  let lastY = 0; const header = $('#top');
+  addEventListener('scroll', () => {
+    const y = scrollY;
+    header.classList.toggle('scrolled', y > 40);
+    header.classList.toggle('hidden', y > lastY && y > 400);
+    lastY = y;
+    scrub();
+  }, { passive: true });
+
+  // Mobile menu
+  $('#burger').onclick = () => $('#menu').classList.toggle('open');
+  $$('#menu a').forEach(a => a.onclick = () => $('#menu').classList.remove('open'));
+
+  // Scroll-scrubbed intro text
+  const st = $('#scrubText');
+  st.innerHTML = st.textContent.split(' ').map(w => `<span class="word">${w}</span>`).join(' ');
+  const words = st.querySelectorAll('.word');
+  function scrub() {
+    const r = st.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (innerHeight * .85 - r.top) / (r.height + innerHeight * .35)));
+    const lit = Math.floor(p * words.length);
+    words.forEach((w, i) => w.classList.toggle('lit', i < lit));
+  }
+  scrub();
+
+  // Reveal + counters
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in'); io.unobserve(e.target);
+  }), { threshold: .12 });
+  $$('.rv').forEach(el => io.observe(el));
+
+  const cio = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target, t = parseFloat(el.dataset.n); cio.unobserve(el);
+    if (isNaN(t)) return;
+    const t0 = performance.now();
+    (function step(now) { const p = Math.min((now - t0) / 1800, 1); el.textContent = Math.round(t * (1 - Math.pow(1 - p, 4))) + (p === 1 && t > 50 ? '+' : ''); if (p < 1) requestAnimationFrame(step); })(t0);
+  }));
+  $$('[data-n]').forEach(el => cio.observe(el));
+
+  // Magnetic
+  if (matchMedia('(pointer:fine)').matches) $$('.magnetic, .pill').forEach(b => {
+    b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .25}px, ${(e.clientY - r.top - r.height / 2) * .35}px)`; });
+    b.addEventListener('pointerleave', () => b.style.transform = '');
+  });
+
+  // Pricing toggle
+  const knob = $('#knob'), tBtns = $$('#toggle button');
+  const placeKnob = b => { knob.style.width = b.offsetWidth + 'px'; knob.style.transform = `translateX(${b.offsetLeft - 5}px)`; };
+  placeKnob(tBtns[0]); addEventListener('resize', () => placeKnob($('#toggle button.on')));
+  tBtns.forEach(b => b.onclick = () => {
+    tBtns.forEach(x => x.classList.remove('on')); b.classList.add('on'); placeKnob(b);
+    const m = b.dataset.mode === 'monthly';
+    $$('.price').forEach(p => {
+      const v = p.querySelector('.val'), per = p.querySelector('.per');
+      v.style.opacity = 0;
+      setTimeout(() => { v.textContent = m ? v.dataset.m : v.dataset.p; per.textContent = m ? ' / month' : (v.dataset.p.includes('Custom') ? '' : ' / project'); v.style.opacity = 1; }, 200);
+    });
+  });
+  $$('.price .val').forEach(v => v.style.transition = 'opacity .2s');
+
+  // Testimonials slider
+  const track = $('#tTrack'), slides = track.children, dots = $('#tDots'); let ti = 0, timer;
+  [...slides].forEach((_, i) => { const d = document.createElement('button'); d.setAttribute('aria-label', 'Slide ' + (i + 1)); d.onclick = () => go(i); dots.appendChild(d); });
+  function go(i) { ti = (i + slides.length) % slides.length; track.style.transform = `translateX(-${ti * 100}%)`; [...dots.children].forEach((d, k) => d.classList.toggle('on', k === ti)); clearInterval(timer); timer = setInterval(() => go(ti + 1), 6000); }
+  $('#tPrev').onclick = () => go(ti - 1); $('#tNext').onclick = () => go(ti + 1); go(0);
+
+  // FAQ
+  $$('.faq-q').forEach(q => q.onclick = () => {
+    const item = q.parentElement, open = item.classList.contains('open');
+    $$('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!open) item.classList.add('open');
+  });
+
+  // Clock
+  const clk = $('#clock');
+  const tickClock = () => clk.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  tickClock(); setInterval(tickClock, 1000);
+  $('#yr').textContent = new Date().getFullYear();
+
+  // Form
+  $('#cform').onsubmit = e => { e.preventDefault(); e.target.reset(); const t = $('#toast'); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); };
+  $('#backTop').onclick = e => { e.preventDefault(); scrollTo({ top: 0, behavior: 'smooth' }); };
+})();
+</script>
+</body>
+</html>
